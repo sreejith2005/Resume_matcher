@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Resume Screener & Job Matcher</title>
+    <!-- Tailwind CDN for quick dev -->
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center">
+    <div class="w-full max-w-2xl mx-auto shadow-xl p-8 bg-white rounded-2xl border border-blue-100">
+        <h2 class="text-3xl font-bold text-blue-800 mb-2 tracking-tight text-center">Smart Resume Screener</h2>
+        <p class="text-lg text-gray-500 mb-8 font-medium text-center">Match your resume with any Job Description and get instant, explainable feedback!</p>
+
+        <form method="POST" enctype="multipart/form-data" class="mb-10 grid gap-5">
+            <label class="block">
+                <span class="font-semibold text-gray-700">Resume (.pdf, .docx):</span>
+                <input type="file" name="resume" required class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-blue-400">
+            </label>
+            <label class="block">
+                <span class="font-semibold text-gray-700">Job Description (TXT/PDF/DOCX):</span>
+                <input type="file" name="jd" required class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-blue-400">
+            </label>
+            <button type="submit" class="mt-2 py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-400 text-white rounded-xl font-bold shadow hover:from-blue-700 hover:to-purple-500 transition">
+                Check Matching Score
+            </button>
+        </form>
+
+        {% if result %}
+        <div class="relative overflow-hidden">
+            <!-- Card animation shadow -->
+            <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-200/5 to-white/0 rounded-2xl"></div>
+            <div class="space-y-5 z-10 relative">
+                <div class="flex flex-row items-center justify-between pb-3 border-b border-blue-100">
+                    <span class="text-xl font-bold text-purple-800">Match Score</span>
+                    <span class="text-4xl font-extrabold text-blue-700 ml-4">
+                        {{result['score']}}%
+                    </span>
+                </div>
+                <div class="flex items-center gap-6 flex-wrap">
+                    <div class="rounded-xl border px-4 py-2 flex-1 bg-purple-50">
+                        <b class="text-purple-700">Resume Skills:</b>
+                        <span class="text-gray-900">{{result['skills']|join(', ')}}</span>
+                    </div>
+                    <div class="rounded-xl border px-4 py-2 flex-1 bg-blue-50">
+                        <b class="text-blue-700">JD Required Skills:</b>
+                        <span class="text-gray-900">{{result['req_skills']|join(', ')}}</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <b class="text-gray-600">Your Experience:</b>
+                        <span>{{result['experience_years']}} years</span>
+                    </div>
+                    <div class="flex-1">
+                        <b class="text-gray-600">JD Minimum:</b>
+                        <span>{{result['min_exp']}} years</span>
+                    </div>
+                    <div class="flex-1">
+                        <b class="text-gray-600">Your Location:</b>
+                        <span>{{result['location']}}</span>
+                    </div>
+                    <div class="flex-1">
+                        <b class="text-gray-600">JD Location:</b>
+                        <span>{{result['jd_loc']}}</span>
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <span class="font-semibold text-red-700">Missing Skills:</span>
+                            <span class="text-red-800">{{result['missing']|join(', ') if result['missing'] else "None!"}}</span>
+                        </div>
+                        <div class="flex-1">
+                            <span class="font-semibold text-green-700">Extra Skills:</span>
+                            <span class="text-green-800">{{result['extra']|join(', ') if result['extra'] else "None!"}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4 text-sm text-gray-500">
+                    <b class="text-gray-700">How scoring works:</b> <br>
+                    Skill match and experience are primary factors; missing/extra skills are highlighted for transparency.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
